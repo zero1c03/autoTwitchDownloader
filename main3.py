@@ -1,5 +1,5 @@
 import argparse
-import urllib2
+import urllib.request
 import json
 import time
 import os
@@ -31,15 +31,18 @@ def get_id(user):
     status = 0
     data = None
     url = "https://api.twitch.tv/helix/users?login=" + user
-    # for python 2.7
-    request = urllib2.Request(url, headers={"Client-ID": clientID})
-    contents = urllib2.urlopen(request).read()
-    data = json.loads(contents)
+    # for python 3.x
+    request = urllib.request.Request(url, headers={"Client-ID": clientID})
+    opener = urllib.request.build_opener()
+    contents = opener.open(request)
+    reader = codecs.getreader("utf-8")
+    data = json.load(reader(contents))
+
     id = None
     try:
         id = data['data'][0]['id']
     except:
-        print "get user error"
+        print('get user error')
     return id
 
 
@@ -49,10 +52,12 @@ def check_user(user):
     data = None
     url = "https://api.twitch.tv/helix/streams?user_id=" + user
 
-    # for python 2.7
-    request = urllib2.Request(url, headers={"Client-ID": clientID})
-    contents = urllib2.urlopen(request).read()
-    data = json.loads(contents)
+    # for python 3.x
+    request = urllib.request.Request(url, headers={"Client-ID": clientID})
+    opener = urllib.request.build_opener()
+    contents = opener.open(request)
+    reader = codecs.getreader("utf-8")
+    data = json.load(reader(contents))
 
     if data["data"] == []:
         status = 0
@@ -93,15 +98,16 @@ def check_loop(user):
             printDot = "."
 
         if status == 0:
-            # for python 2.7
+            # for python 3.x
             print(userName + " offline, try after " +
                   str(checkTime) + " seconds" + printDot)
             time.sleep(checkTime)
         elif status == 1:
-            # for python 2.7
+            # for python 3.x
             print(userName + " streaming, start download!")
-            filename = userName + "-" + \
-                datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss") + ".mp4"
+
+            filename = userName + "-" + datetime.datetime.now().strftime("%Y-%m-%d_%Hh%Mm%Ss") + ".mp4"
+
             # print(filename)
             streamURL = "twitch.tv/" + userName
 
@@ -132,7 +138,7 @@ print("Python version = ", sys.version_info[0])
 user = parse_args().u
 location = parse_args().f
 
-user = "wannasinging"
+user = "achinorc"
 location = "Z:\Stream"
 
 if user == None:
