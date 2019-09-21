@@ -1,5 +1,4 @@
 import argparse
-import urllib2
 import json
 import time
 import os
@@ -7,6 +6,7 @@ import subprocess
 import datetime
 import sys
 import codecs
+import requests
 from sys import platform
 
 clientID = "xjjsgz3mrmduq7241fuuk724nnmgcq"
@@ -32,12 +32,11 @@ def get_id(user):
     data = None
     url = "https://api.twitch.tv/helix/users?login=" + user
     # for python 2.7
-    request = urllib2.Request(url, headers={"Client-ID": clientID})
-    contents = urllib2.urlopen(request).read()
-    data = json.loads(contents)
+    request = requests.get(url, headers={"Client-ID": clientID})
+    contents = request.json()
     id = None
     try:
-        id = data['data'][0]['id']
+        id = contents['data'][0]['id']
     except:
         print "get user error"
     return id
@@ -50,16 +49,15 @@ def check_user(user):
     url = "https://api.twitch.tv/helix/streams?user_id=" + user
 
     # for python 2.7
-    request = urllib2.Request(url, headers={"Client-ID": clientID})
-    contents = urllib2.urlopen(request).read()
-    data = json.loads(contents)
+    request = requests.get(url, headers={"Client-ID": clientID})
+    contents = request.json()
 
-    if data["data"] == []:
+    if contents["data"] == []:
         status = 0
     else:
         status = 1
 
-    return status, data
+    return status, contents
 
 
 def check_followed():
@@ -132,8 +130,8 @@ print("Python version = ", sys.version_info[0])
 user = parse_args().u
 location = parse_args().f
 
-# user = "wannasinging"
-# location = "Z:\Stream"
+user = "zrush"
+location = "Z:\Stream"
 
 if user == None:
     print("please '-u User' to input streamer")
