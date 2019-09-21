@@ -138,8 +138,8 @@ print("Python version = ", sys.version_info[0])
 user = parse_args().u
 location = parse_args().f
 
-user = "achinorc"
-location = "Z:\Stream"
+# user = "achinorc"
+# location = "Z:\Stream"
 
 if user == None:
     print("please '-u User' to input streamer")
