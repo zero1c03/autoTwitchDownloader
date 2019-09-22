@@ -49,13 +49,15 @@ def check_user(user):
     url = "https://api.twitch.tv/helix/streams?user_id=" + user
 
     # for python 2.7
-    request = requests.get(url, headers={"Client-ID": clientID})
-    contents = request.json()
-
-    if contents["data"] == []:
+    try:
+        request = requests.get(url, headers={"Client-ID": clientID})
+        contents = request.json()
+        if contents["data"] == []:
+            status = 0
+        else:
+            status = 1
+    except requests.ConnectionError as e:
         status = 0
-    else:
-        status = 1
 
     return status, contents
 
