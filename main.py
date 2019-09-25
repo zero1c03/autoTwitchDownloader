@@ -47,7 +47,7 @@ def check_user(user):
     status = 0
     data = None
     url = "https://api.twitch.tv/helix/streams?user_id=" + user
-
+    contents = ''
     # for python 2.7
     try:
         request = requests.get(url, headers={"Client-ID": clientID})
