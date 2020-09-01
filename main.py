@@ -10,6 +10,7 @@ import requests
 from sys import platform
 
 clientID = "xjjsgz3mrmduq7241fuuk724nnmgcq"
+authorization = "Bearer c17cddwyoufusk7d5sbnms36s5l740"
 checkTime = 5
 
 userName = ""
@@ -32,7 +33,7 @@ def get_id(user):
     data = None
     url = "https://api.twitch.tv/helix/users?login=" + user
     # for python 2.7
-    request = requests.get(url, headers={"Client-ID": clientID})
+    request = requests.get(url, headers={"Client-ID": clientID, "Authorization": authorization})
     contents = request.json()
     id = None
     try:
@@ -50,13 +51,17 @@ def check_user(user):
     contents = ''
     # for python 2.7
     try:
-        request = requests.get(url, headers={"Client-ID": clientID})
+        request = requests.get(url, headers={"Client-ID": clientID, "Authorization": authorization})
         contents = request.json()
         if contents["data"] == []:
             status = 0
         else:
             status = 1
     except requests.ConnectionError as e:
+        status = 0
+    except KeyError as e:
+        status = 0
+    except json.JSONDecodeError as e:
         status = 0
 
     return status, contents
@@ -117,8 +122,9 @@ def check_loop(user):
                 # Linux version
                 print("linux mode")
                 filename = location + "/" + filename
+		print filename
                 subprocess.call(["streamlink",
-                                 streamURL, 'best', '-o',  filename])
+                                 streamURL, '720p', '-o',  filename])
 
             print("Download finished, start checking again. \n")
             time.sleep(checkTime)
